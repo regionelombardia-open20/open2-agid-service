@@ -11,70 +11,58 @@
 
 namespace open20\agid\service\models;
 
-use yii\helpers\ArrayHelper;
-
 /**
- * This is the model class for table "agid_content_type_service".
+ * Class AgidServiceTypeRoles
+ * This is the model class for table "service_agid_type_roles".
+ * @package open20\agid\service\models
  */
-class AgidServiceContentType extends \open20\agid\service\models\base\AgidServiceContentType
+class AgidServiceTypeRoles extends \open20\agid\service\models\base\AgidServiceTypeRoles
 {
-    public function getEditFields()
-    {
-        $labels = $this->attributeLabels();
-        
-        return [
-            [
-                'slug' => 'name',
-                'label' => $labels['name'],
-                'type' => 'string'
-            ],
-            [
-                'slug' => 'description',
-                'label' => $labels['description'],
-                'type' => 'text'
-            ],
-        ];
-    }
-    
-    public function attributeLabels()
-    {
-        return
-            ArrayHelper::merge(
-                parent::attributeLabels(),
-                [
-                ]);
-    }
-    
+    /**
+     * @inheritdoc
+     */
     public function representingColumn()
     {
         return [
-//inserire il campo o i campi rappresentativi del modulo
         ];
     }
-    
+
     /**
-     * Returns the text hint for the specified attribute.
-     * @param string $attribute the attribute name
-     * @return string the attribute hint
+     * @inheritdoc
+     */
+    public function attributeHints()
+    {
+        return [
+        ];
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getAttributeHint($attribute)
     {
         $hints = $this->attributeHints();
         return isset($hints[$attribute]) ? $hints[$attribute] : null;
     }
-    
-    public function attributeHints()
+
+    public function getEditFields()
     {
+        $labels = $this->attributeLabels();
+
         return [
+            [
+                'slug' => 'service_agid_type_id',
+                'label' => $labels['service_agid_type_id'],
+                'type' => 'integer'
+            ],
+            [
+                'slug' => 'role',
+                'label' => $labels['role'],
+                'type' => 'string'
+            ],
         ];
     }
-    
-    public function rules()
-    {
-        return ArrayHelper::merge(parent::rules(), [
-        ]);
-    }
-    
+
     /**
      * @return string marker path
      */
@@ -82,7 +70,7 @@ class AgidServiceContentType extends \open20\agid\service\models\base\AgidServic
     {
         return null; //TODO
     }
-    
+
     /**
      * If events are more than one, set 'array' => true in the calendarView in the index.
      * @return array events
@@ -91,7 +79,7 @@ class AgidServiceContentType extends \open20\agid\service\models\base\AgidServic
     {
         return NULL; //TODO
     }
-    
+
     /**
      * @return url event (calendar of activities)
      */
@@ -99,7 +87,7 @@ class AgidServiceContentType extends \open20\agid\service\models\base\AgidServic
     {
         return NULL; //TODO e.g. Yii::$app->urlManager->createUrl([]);
     }
-    
+
     /**
      * @return color event
      */
@@ -107,7 +95,7 @@ class AgidServiceContentType extends \open20\agid\service\models\base\AgidServic
     {
         return NULL; //TODO
     }
-    
+
     /**
      * @return title event
      */
@@ -115,6 +103,4 @@ class AgidServiceContentType extends \open20\agid\service\models\base\AgidServic
     {
         return NULL; //TODO
     }
-    
-    
 }

@@ -236,7 +236,7 @@ abstract class AgidService extends ContentModel implements \open20\amos\seo\inte
         return ArrayHelper::map(
                 ArrayHelper::getColumn(
                     (new \yii\db\Query())->from('sw_status')
-                    ->where(['workflow_id' => $this::AGID_SERVICE_WORKFLOW])
+                    ->where(['workflow_id' => AgidServiceModel::AGID_SERVICE_WORKFLOW])
                     ->orderBy(['sort_order' => SORT_ASC])
                     ->all(),
 
@@ -329,7 +329,7 @@ abstract class AgidService extends ContentModel implements \open20\amos\seo\inte
 
         if($only_validated){
 
-            $agid_service_related_service = $agid_service_related_service->andWhere([ 'status' => $this::AGID_SERVICE_STATUS_VALIDATED ]);
+            $agid_service_related_service = $agid_service_related_service->andWhere([ 'status' => AgidServiceModel::AGID_SERVICE_STATUS_VALIDATED ]);
         }
 
         return $agid_service_related_service = $agid_service_related_service->andWhere([ 'deleted_at' => null ])->all();

@@ -18,9 +18,9 @@ use yii\helpers\ArrayHelper;
  */
 class AgidServiceStatus extends \open20\agid\service\models\base\AgidServiceStatus
 {
-    public static function getEditFields()
+    public function getEditFields()
     {
-        $labels = self::attributeLabels();
+        $labels = $this->attributeLabels();
         
         return [
             [

@@ -30,6 +30,7 @@ use open20\agid\service\Module;
 use yii\helpers\ArrayHelper;
 use yii\web\View;
 use yii\widgets\ActiveForm as ActiveForm2;
+use yii\web\JsExpression;
 
 /**
  * @var View $this
@@ -349,12 +350,15 @@ use yii\widgets\ActiveForm as ActiveForm2;
                         foreach ($model->agidServiceRelatedServiceMm as $key => $value) {
                             $agid_service_related_service_mm[] = $value->agid_related_service_id;
                         }
+                        $queryServiceCorr = \open20\agid\service\models\AgidService::find()
+                                ->andWhere(['deleted_at' => null]);
+                        if(!$model->isNewRecord){
+                            $queryServiceCorr->andWhere(['<>', 'id', $model->id ]);
+                        }
                     ?>
                     <?=
                         $form->field($model, 'agid_service_related_service_mm[]')->widget(\kartik\select2\Select2::className(),[
-                            'data' => ArrayHelper::map(\open20\agid\service\models\AgidService::find()
-                                ->andWhere(['deleted_at' => null])
-                                ->andWhere(['<>', 'id', $model->id ])
+                            'data' => ArrayHelper::map($queryServiceCorr
                                 ->asArray()->all(), 'id', 'name'),
                             'language' => substr(Yii::$app->language, 0, 2),
                             'options' => [
@@ -362,10 +366,22 @@ use yii\widgets\ActiveForm as ActiveForm2;
                                 'multiple' => true,
                                 'placeholder' => 'Seleziona ...',
                                 'value' => isset($agid_service_related_service_mm) ? $agid_service_related_service_mm : null,
-                            ],
+                            ], 
                             'pluginOptions' => [
-                                'allowClear' => true,
-                            ]
+                        'allowClear' => true,
+                        'minimumInputLength' => 3,
+                        'language' => [
+                            'errorLoading' => new JsExpression("function () { return 'Attendi per i risultati...'; }"),
+                        ],
+                        'ajax' => [
+                            'url' => '/service/agid-service/global' . (!empty($model->id)? '?id='.$model->id : ''),
+                            'dataType' => 'json',
+                            'data' => new JsExpression('function(params) { return {q:params.term}; }')
+                        ],
+                        'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
+                        'templateResult' => new JsExpression('function(global) { return global.text; }'),
+                        'templateSelection' => new JsExpression('function (global) { return global.text; }'),
+                    ],
                         ])->hint(Module::t('amosservice', '#agid_service_related_service_mm'))
                         ->label(Module::t('amosservice', '#agid_service_related_service_mm'));
                     ?>

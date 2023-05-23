@@ -102,7 +102,7 @@ class AgidService extends BaseAgidService
             ],
             'SeoContentBehavior' => [
                 'class' => SeoContentBehavior::className(),
-                'imageAttribute' => null,
+                'imageAttribute' => 'agidServiceImage',
                 'titleAttribute' => 'name',
                 'descriptionAttribute' => 'description',
                 'defaultOgType' => 'professionalservice',

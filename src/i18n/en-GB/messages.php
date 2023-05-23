@@ -45,4 +45,6 @@ return [
     "#status" => "Status",
     '#article_singular' => 'the',
     '#person' => 'person', 
+    "AgidServiceWorkflow/DRAFT" => "DRAFT",
+    "AgidServiceWorkflow/VALIDATED" => "PUBLISHED",
 ];

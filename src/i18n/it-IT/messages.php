@@ -58,5 +58,7 @@ return [
     '#updated_to' => 'Aggiornato al',
     '#article_singular' => 'la',
     '#person' => 'persona', 
+    "AgidServiceWorkflow/DRAFT" => "BOZZA",
+    "AgidServiceWorkflow/VALIDATED" => "PUBBLICATO",
 
 ];

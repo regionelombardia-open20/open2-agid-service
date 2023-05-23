@@ -249,6 +249,31 @@ class AgidServiceSearch extends AgidService implements CmsModelInterface
                 $query->andWhere(eval("return ".$command.";"));
             }
         }
+
+
+        /**
+         * cms panel
+         * Condizione di ordinamento
+         * updated_at => DESC, name => DESC
+         */
+        if( isset($params['orderBy']) && $params['orderBy'] ){
+
+            $list_fields = explode(",", $params['orderBy']);
+
+            foreach ($list_fields as $key => $field_order) {
+                
+                $arr_field_order = explode("=>", $field_order);
+                $field = trim($arr_field_order[0]);
+                $order = trim($arr_field_order[1]);
+
+                $query->addOrderBy("$field $order");
+            }
+
+        }else{
+            // default order
+            $query->orderBy(['name' => ASC]);
+        }
+
         return $dataProvider;
     }
 

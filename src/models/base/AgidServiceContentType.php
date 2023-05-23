@@ -19,6 +19,7 @@ use Yii;
  * @property integer $id
  * @property string $name
  * @property string $description
+ * @property string $content_type_icon
  * @property string $created_at
  * @property string $updated_at
  * @property string $deleted_at
@@ -49,7 +50,7 @@ abstract class AgidServiceContentType extends \open20\amos\core\record\Record
             [['description'], 'string'],
             [['created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['created_by', 'updated_by', 'deleted_by'], 'integer'],
-            [['name'], 'string', 'max' => 255],
+            [['name', 'content_type_icon'], 'string', 'max' => 255],
         ];
     }
     
@@ -62,6 +63,7 @@ abstract class AgidServiceContentType extends \open20\amos\core\record\Record
             'id' => Yii::t('agid-service', 'ID'),
             'name' => Yii::t('agid-service', 'Nome'),
             'description' => Yii::t('agid-service', 'Descrizione'),
+            'content_type_icon' => Yii::t('agid-person', 'Icon'),
             'created_at' => Yii::t('agid-service', 'Created at'),
             'updated_at' => Yii::t('agid-service', 'Updated at'),
             'deleted_at' => Yii::t('agid-service', 'Deleted at'),

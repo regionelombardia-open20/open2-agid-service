@@ -96,9 +96,9 @@ abstract class AgidService extends ContentModel implements \open20\amos\seo\inte
     {
         return [
             [['agid_content_type_service_id', 'agid_service_type_id', 'agid_service_status_id', 'agid_uo_manager_id', 'agid_uo_area_id', 'created_by', 'updated_by', 'deleted_by'], 'integer'],
-            [['service_status_motivation', 'subtitle', 'long_description', 'recipients_description', 'persons_apply', 'geographical_apply', 'procedure_apply', 'output', 'outcome_procedure_apply', 'digital_channel_url', 'authentication_way', 'physical_channel', 'physical_channel_reservation', 'instructions', 'costs', 'constrains', 'phases_deadline', 'special_case', 'external_links'], 'string'],
+            [['service_status_motivation', 'subtitle', 'further_information', 'long_description', 'recipients_description', 'persons_apply', 'geographical_apply', 'procedure_apply', 'output', 'outcome_procedure_apply', 'digital_channel_url', 'authentication_way', 'physical_channel', 'physical_channel_reservation', 'instructions', 'costs', 'constrains', 'phases_deadline', 'special_case', 'external_links'], 'string'],
             [['created_at', 'updated_at', 'deleted_at', 'documenti'], 'safe'],
-            [['name', 'status', 'further_information'], 'string', 'max' => 255],
+            [['name', 'status'], 'string', 'max' => 255],
             [['description'], 'string', 'max' => 160],
             [['agid_content_type_service_id'], 'exist', 'skipOnError' => true, 'targetClass' => AgidServiceContentType::className(), 'targetAttribute' => ['agid_content_type_service_id' => 'id']],
             [['agid_service_status_id'], 'exist', 'skipOnError' => true, 'targetClass' => AgidServiceStatus::className(), 'targetAttribute' => ['agid_service_status_id' => 'id']],

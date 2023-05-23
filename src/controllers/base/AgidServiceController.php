@@ -172,6 +172,11 @@ abstract class AgidServiceController extends CrudController
 				]
 			]
 		]);
+        
+        // set sort order by created_at / id
+        $sort = $this->dataProvider->getSort();
+        $sort->defaultOrder = ['id' => SORT_DESC];
+        $this->dataProvider->setSort($sort);
 
         return parent::actionIndex($layout);
     }

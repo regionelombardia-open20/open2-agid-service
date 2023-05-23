@@ -100,7 +100,8 @@ use open20\agid\service\Module;
                     'status' => [
 						'attribute' => 'status',
 						'value' => function ($model) {
-							return WorkflowTransitionWidgetUtility::getLabelStatus($model);
+							// return WorkflowTransitionWidgetUtility::getLabelStatus($model);
+                            return Module::t('amosservice', $model->status);
 						},
                         'label' => Module::t('amosservice','#status')
 					],

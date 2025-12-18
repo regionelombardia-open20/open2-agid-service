@@ -42,9 +42,9 @@ class AgidServiceRelatedServiceMm extends \open20\agid\service\models\base\AgidS
         return ArrayHelper::merge(parent::attributeLabels(), []);
     }
 
-    public function getEditFields()
+    public static function getEditFields()
     {
-        $labels = $this->attributeLabels();
+        $labels = self::attributeLabels();
 
         return [
             [

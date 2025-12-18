@@ -130,9 +130,9 @@ class AgidService extends BaseAgidService
         return isset($hints[$attribute]) ? $hints[$attribute] : null;
     }
     
-    public function getEditFields()
+    public static function getEditFields()
     {
-        $labels = $this->attributeLabels();
+        $labels = self::attributeLabels();
         
         return [
             [
@@ -336,7 +336,7 @@ class AgidService extends BaseAgidService
      * @param $model MktVersioneApi
      * @return mixed
      */
-    public function loadRelations()
+    public function loadRelations($relationNames, $asArray = false)
     {
         $model = $this;
         foreach ((array)$model->getAgidServiceDocumentiMms()->all() as $DocumentiNnId) {

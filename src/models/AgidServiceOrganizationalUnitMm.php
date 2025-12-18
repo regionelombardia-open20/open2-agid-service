@@ -52,9 +52,9 @@ class AgidServiceOrganizationalUnitMm extends \open20\agid\service\models\base\A
     }
     
     
-    public function getEditFields()
+    public static function getEditFields()
     {
-        $labels = $this->attributeLabels();
+        $labels = self::attributeLabels();
         
         return [
             [

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Aria S.p.A.
  * OPEN 2.0
@@ -35,17 +36,17 @@ abstract class AgidServiceController extends CrudController
      * @var string $layout
      */
     public $layout = 'main';
-
+    
     /**
      * @var \open20\amos\cwh\AmosCwh $moduleCwh
      */
     public $moduleCwh;
-
+    
     /**
      * @var array $scope
      */
     public $scope;
-
+    
     /**
      * @inheridoc
      */
@@ -56,40 +57,41 @@ abstract class AgidServiceController extends CrudController
 
         // default status of search model 
         $this->modelSearch->status = null;
-
-        $this->scope     = null;
+        
+        $this->scope = null;
         $this->moduleCwh = Yii::$app->getModule('cwh');
-
+        
         if (!empty($this->moduleCwh)) {
             $this->scope = $this->moduleCwh->getCwhScope();
         }
-
+        
         $this->setAvailableViews([
             'grid' => [
                 'name' => 'grid',
-                'label' => AmosIcons::show('view-list-alt').Html::tag('p', BaseAmosModule::tHtml('amoscore', 'Table')),
+                'label' => AmosIcons::show('view-list-alt') . Html::tag('p', BaseAmosModule::tHtml('amoscore', 'Table')),
                 'url' => '?currentView=grid'
             ],
+        
         ]);
-
+        
         parent::init();
-
+        
         $this->setUpLayout();
     }
-
+    
     /**
      * Set a view param used in \open20\amos\core\forms\CreateNewButtonWidget
      */
     protected function setCreateNewBtnParams()
     {
-        $createBtnTitle                               = Module::t('amosservice', '#add_new_service');
+        $createBtnTitle = Module::t('amosservice', '#add_new_service');
         Yii::$app->view->params['createNewBtnParams'] = [
             'createNewBtnLabel' => $createBtnTitle,
             'urlCreateNew' => ['/service/agid-service/create'],
             'otherOptions' => ['title' => $createBtnTitle, 'class' => 'btn btn-primary']
         ];
     }
-
+    
     /**
      * This method is useful to set all common params for all list views.
      */
@@ -100,7 +102,7 @@ abstract class AgidServiceController extends CrudController
         Yii::$app->session->set(Module::beginCreateNewSessionKey(), Url::previous());
         Yii::$app->session->set(Module::beginCreateNewSessionKeyDateTime(), date('Y-m-d H:i:s'));
     }
-
+    
     /**
      * Used for set page title and breadcrumbs.
      * @param string $pageTitle News page title (ie. Created by news, ...)
@@ -109,12 +111,12 @@ abstract class AgidServiceController extends CrudController
     {
         Yii::$app->session->set('previousTitle', $pageTitle);
         Yii::$app->session->set('previousUrl', Url::previous());
-        Yii::$app->view->title                 = $pageTitle;
+        Yii::$app->view->title = $pageTitle;
         Yii::$app->view->params['breadcrumbs'] = [
             ['label' => $pageTitle]
         ];
     }
-
+    
     /**
      * Lists all AgidService models.
      * @return mixed
@@ -126,44 +128,59 @@ abstract class AgidServiceController extends CrudController
         $this->setTitleAndBreadcrumbs(Module::t('amosservice', 'Services'));
         $this->setDataProvider($this->modelSearch->search(Yii::$app->request->getQueryParams()));
 
-        $this->getDataProvider()->setSort([
-            'attributes' => [
-                //Normal columns
-                'id',
-                'name',
-                'updated_by',
-                'updated_at',
-                'status',
-                //related columns
-                'agidServiceType.name' => [
-                    'asc' => ['agid_service_type.name' => SORT_ASC],
-                    'desc' => ['agid_service_type.name' => SORT_DESC],
-                    'default' => SORT_ASC
-                ],
-                'agidServiceStatus.name' => [
-                    'asc' => ['agid_service_status.name' => SORT_ASC],
-                    'desc' => ['agid_service_status.name' => SORT_DESC],
-                    'default' => SORT_ASC
-                ],
-                'agidUoManager.name' => [
-                    'asc' => ['agid_organizational_unit.name' => SORT_ASC],
-                    'desc' => ['agid_organizational_unit.name' => SORT_DESC],
-                    'default' => SORT_ASC
-                ],
-                'agidUoArea.name' => [
-                    'asc' => ['agid_organizational_unit.name' => SORT_ASC],
-                    'desc' => ['agid_organizational_unit.name' => SORT_DESC],
-                    'default' => SORT_ASC
-                ],
-            ]
-            ]
-        );
+        // rigenerazione del dataProvider per il sort dei campi
+		$this->dataProvider = new ActiveDataProvider([
+			'query' => $this->dataProvider
+                        ->query
+                        ->joinWith('agidServiceType', true)
+                        ->joinWith('agidServiceStatus', true)
+                        ->joinWith('agidUoManager', true),
+			'sort' => [
+				'attributes' => [
 
-        $this->dataProvider->sort->defaultOrder = ['id' => SORT_DESC];
+					//Normal columns
+					'id',
+					'name',
+					'updated_by',
+					'updated_at',
+					'status',
+
+					//related columns
+                    'agidServiceType.name' => [
+                        'asc' => ['agid_service_type.name' => SORT_ASC],
+						'desc' => ['agid_service_type.name' => SORT_DESC],
+						'default' => SORT_ASC
+                    ],
+                    
+                    'agidServiceStatus.name' => [
+                        'asc' => ['agid_service_status.name' => SORT_ASC],
+						'desc' => ['agid_service_status.name' => SORT_DESC],
+						'default' => SORT_ASC
+                    ],
+
+                    'agidUoManager.name' => [
+                        'asc' => ['agid_organizational_unit.name' => SORT_ASC],
+						'desc' => ['agid_organizational_unit.name' => SORT_DESC],
+						'default' => SORT_ASC
+                    ],
+
+                    'agidUoArea.name' => [
+                        'asc' => ['agid_organizational_unit.name' => SORT_ASC],
+						'desc' => ['agid_organizational_unit.name' => SORT_DESC],
+						'default' => SORT_ASC
+                    ],
+				]
+			]
+		]);
         
+        // set sort order by created_at / id
+        $sort = $this->dataProvider->getSort();
+        $sort->defaultOrder = ['id' => SORT_DESC];
+        $this->dataProvider->setSort($sort);
+
         return parent::actionIndex($layout);
     }
-
+    
     /**
      * Displays a single AgidService model.
      * @param integer $id
@@ -179,7 +196,7 @@ abstract class AgidServiceController extends CrudController
             return $this->render('view', ['model' => $this->model]);
         }
     }
-
+    
     /**
      * Creates a new AgidService model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -189,30 +206,27 @@ abstract class AgidServiceController extends CrudController
     {
         $this->setUpLayout('form');
         $this->model = new AgidService();
-
+        
         if ($this->model->load(Yii::$app->request->post()) && $this->model->validate()) {
             if ($this->model->save()) {
                 $this->model->createRelations();
-                Yii::$app->getSession()->addFlash('success',
-                    Yii::t('amoscore', 'Il servizio è stato creato con successo.'));
+                Yii::$app->getSession()->addFlash('success', Yii::t('amoscore', 'Il servizio è stato creato con successo.'));
                 return $this->redirect(['update', 'id' => $this->model->id]);
             } else {
-                Yii::$app->getSession()->addFlash('danger',
-                    Yii::t('amoscore', 'Il servizio non è stato creato, controllare i dati inseriti nel form.'));
+                Yii::$app->getSession()->addFlash('danger', Yii::t('amoscore', 'Il servizio non è stato creato, controllare i dati inseriti nel form.'));
             }
         }
-
-        return $this->render('create',
-                [
-                    'model' => $this->model,
-                    'fid' => NULL,
-                    'dataField' => NULL,
-                    'dataEntity' => NULL,
-                    'moduleCwh' => $this->moduleCwh,
-                    'scope' => $this->scope
+        
+        return $this->render('create', [
+            'model' => $this->model,
+            'fid' => NULL,
+            'dataField' => NULL,
+            'dataEntity' => NULL,
+            'moduleCwh' => $this->moduleCwh,
+            'scope' => $this->scope
         ]);
     }
-
+    
     /**
      * Creates a new AgidService model by ajax request.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -222,7 +236,7 @@ abstract class AgidServiceController extends CrudController
     {
         $this->setUpLayout('form');
         $this->model = new AgidService();
-
+        
         if (Yii::$app->request->isAjax && $this->model->load(Yii::$app->request->post()) && $this->model->validate()) {
             if ($this->model->save()) {
                 //Yii::$app->getSession()->addFlash('success', Yii::t('amoscore', 'Item created'));
@@ -231,17 +245,16 @@ abstract class AgidServiceController extends CrudController
                 //Yii::$app->getSession()->addFlash('danger', Yii::t('amoscore', 'Item not created, check data'));
             }
         }
-
-        return $this->renderAjax('_formAjax',
-                [
-                    'model' => $this->model,
-                    'fid' => $fid,
-                    'dataField' => $dataField,
-                    'moduleCwh' => $this->moduleCwh,
-                    'scope' => $this->scope
+        
+        return $this->renderAjax('_formAjax', [
+            'model' => $this->model,
+            'fid' => $fid,
+            'dataField' => $dataField,
+            'moduleCwh' => $this->moduleCwh,
+            'scope' => $this->scope
         ]);
     }
-
+    
     /**
      * Updates an existing AgidService model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -256,26 +269,23 @@ abstract class AgidServiceController extends CrudController
         if ($this->model->load(Yii::$app->request->post()) && $this->model->validate()) {
             if ($this->model->save()) {
                 $this->model->updateRelations();
-                Yii::$app->getSession()->addFlash('success',
-                    Yii::t('amoscore', 'Il servizio è stato aggiornato con successo.'));
+                Yii::$app->getSession()->addFlash('success', Yii::t('amoscore', 'Il servizio è stato aggiornato con successo.'));
                 return $this->redirect(['update', 'id' => $this->model->id]);
             } else {
-                Yii::$app->getSession()->addFlash('danger',
-                    Yii::t('amoscore', 'Il servizio non è stato aggiornato, controllare i dati inseriti nel form.'));
+                Yii::$app->getSession()->addFlash('danger', Yii::t('amoscore', 'Il servizio non è stato aggiornato, controllare i dati inseriti nel form.'));
             }
         }
-
-        return $this->render('update',
-                [
-                    'model' => $this->model,
-                    'fid' => NULL,
-                    'dataField' => NULL,
-                    'dataEntity' => NULL,
-                    'moduleCwh' => $this->moduleCwh,
-                    'scope' => $this->scope
+        
+        return $this->render('update', [
+            'model' => $this->model,
+            'fid' => NULL,
+            'dataField' => NULL,
+            'dataEntity' => NULL,
+            'moduleCwh' => $this->moduleCwh,
+            'scope' => $this->scope
         ]);
     }
-
+    
     /**
      * Deletes an existing AgidService model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -288,11 +298,9 @@ abstract class AgidServiceController extends CrudController
         if ($this->model) {
             $this->model->delete();
             if (!$this->model->hasErrors()) {
-                Yii::$app->getSession()->addFlash('success',
-                    BaseAmosModule::t('amoscore', 'Elemento eliminato con successo.'));
+                Yii::$app->getSession()->addFlash('success', BaseAmosModule::t('amoscore', 'Elemento eliminato con successo.'));
             } else {
-                Yii::$app->getSession()->addFlash('danger',
-                    BaseAmosModule::t('amoscore', 'Non sei autorizzato a eliminare questo elemento.'));
+                Yii::$app->getSession()->addFlash('danger', BaseAmosModule::t('amoscore', 'Non sei autorizzato a eliminare questo elemento.'));
             }
         } else {
             Yii::$app->getSession()->addFlash('danger', BaseAmosModule::tHtml('amoscore', 'Elemento non trovato.'));
